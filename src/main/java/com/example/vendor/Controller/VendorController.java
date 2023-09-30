@@ -2,6 +2,9 @@ package com.example.vendor.Controller;
 import com.example.vendor.Entity.VendorEntity;
 import com.example.vendor.Repository.VendorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +16,20 @@ import java.util.Optional;
 public class VendorController {
     @Autowired
     private VendorRepository vendorRepository;
-    @GetMapping("")
+    @GetMapping("")//this lists all vendors
     public List<VendorEntity> getVendors() {
         System.out.println(vendorRepository.findAll());
         return vendorRepository.findAll();
+    }
+    //for pagination
+    @GetMapping("/page")
+    public ResponseEntity<Page<VendorEntity>> getVendors(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<VendorEntity> vendorPage = vendorRepository.findAll(pageable);
+        return ResponseEntity.ok(vendorPage);
     }
     @PostMapping("/add")
     public ResponseEntity<String> createVendor(@RequestBody VendorEntity vendor) {
