@@ -29,6 +29,21 @@ public class VendorController {
                     .body("Error creating vendor: " + e.getMessage());
         }
     }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteVendor(@PathVariable String id) {
+        try {
+            Optional<VendorEntity> vendor = vendorRepository.findById(id);
+            if (vendor.isPresent()) {
+                vendorRepository.deleteById(id);
+                return ResponseEntity.ok("Vendor deleted successfully.");
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error deleting vendor: " + e.getMessage());
+        }
+    }
 
 }
 
