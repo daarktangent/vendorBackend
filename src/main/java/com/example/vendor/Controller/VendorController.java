@@ -9,7 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -18,8 +20,12 @@ public class VendorController {
     private VendorRepository vendorRepository;
     @GetMapping("")//this lists all vendors
     public List<VendorEntity> getVendors() {
-        System.out.println(vendorRepository.findAll());
+
         return vendorRepository.findAll();
+    }
+    @GetMapping("{id}")//this lists single vendor of id
+    public Optional<VendorEntity> getVendors(@PathVariable String id) {
+        return vendorRepository.findById(id);
     }
     //for pagination
     @GetMapping("/page")
@@ -32,14 +38,10 @@ public class VendorController {
         return ResponseEntity.ok(vendorPage);
     }
     @PostMapping("/add")
-    public ResponseEntity<String> createVendor(@RequestBody VendorEntity vendor) {
-        try {
+    public VendorEntity createVendor(@RequestBody VendorEntity vendor) {
             vendorRepository.save(vendor);
-            return ResponseEntity.ok("Vendor created successfully.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error creating vendor: " + e.getMessage());
-        }
+        System.out.println("add complete");
+            return vendor;
     }
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteVendor(@PathVariable String id) {
@@ -47,7 +49,8 @@ public class VendorController {
             Optional<VendorEntity> vendor = vendorRepository.findById(id);
             if (vendor.isPresent()) {
                 vendorRepository.deleteById(id);
-                return ResponseEntity.ok("Vendor deleted successfully.");
+                System.out.println("Vendor deleted successfully.");
+                return ResponseEntity.noContent().build();
             } else {
                 return ResponseEntity.notFound().build();
             }
@@ -63,7 +66,8 @@ public class VendorController {
             if (existingVendor.isPresent()) {
                 updatedVendor.setId(id); // Set the ID to match the existing vendor
                 vendorRepository.save(updatedVendor);
-                return ResponseEntity.ok("Vendor updated successfully.");
+                System.out.println("update complete");
+                return ResponseEntity.noContent().build();
             } else {
                 return ResponseEntity.notFound().build();
             }

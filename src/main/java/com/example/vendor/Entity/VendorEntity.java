@@ -28,6 +28,9 @@ public class VendorEntity {
         this.zipCode = zipCode;
     }
 
+    public VendorEntity() {
+    }
+
     public String getId() {
 
         return id;
